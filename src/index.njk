@@ -1,0 +1,105 @@
+---
+layout: base.njk
+title: Home
+---
+
+<section id="about" class="about-section">
+  <h2>About Me</h2>
+  
+  <p class="section-label">//now//</p>
+  <ul class="highlight-list">
+    <li>MBA Candidate at <a href="https://www.bc.edu/bc-web/schools/carroll-school.html" target="_blank" rel="noopener">Boston College Carroll School of Graduate Management</a></li>
+  </ul>
+  
+  <p class="section-label">//previously//</p>
+  <ul class="highlight-list">
+    <li>Add your previous experience here</li>
+  </ul>
+  
+  <p class="section-label">//highlights//</p>
+  <ul class="highlight-list">
+    <li>Add interesting facts or accomplishments here</li>
+  </ul>
+</section>
+
+<section id="shelf" class="tabs-container">
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="bookshelf">Bookshelf</button>
+    <button class="tab-btn" data-tab="projects">Projects</button>
+  </nav>
+  
+  <!-- Bookshelf Tab -->
+  <div id="bookshelf" class="tab-content active">
+    
+    <!-- Currently Reading -->
+    {% if books.currentlyReading | length > 0 %}
+    <div class="year-section">
+      <h3 class="year-label">📖 Currently Reading</h3>
+      <div class="book-grid">
+        {% for book in books.currentlyReading %}
+        <div class="book-card" data-title="{{ book.title }}" data-author="{{ book.author }}">
+          {% if book.cover %}
+          <img src="{{ book.cover }}" alt="{{ book.title }}" loading="lazy">
+          {% else %}
+          <div class="book-placeholder"><span>{{ book.title }}</span></div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Want to Read -->
+    {% if books.wantToRead | length > 0 %}
+    <div class="year-section">
+      <h3 class="year-label">📚 Want to Read</h3>
+      <div class="book-grid">
+        {% for book in books.wantToRead %}
+        <div class="book-card" data-title="{{ book.title }}" data-author="{{ book.author }}">
+          {% if book.cover %}
+          <img src="{{ book.cover }}" alt="{{ book.title }}" loading="lazy">
+          {% else %}
+          <div class="book-placeholder"><span>{{ book.title }}</span></div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Finished Books -->
+    {% if books.finished | length > 0 %}
+    <div class="year-section">
+      <h3 class="year-label">✓ Finished ({{ books.finished | length }} books)</h3>
+      <div class="book-grid">
+        {% for book in books.finished %}
+        <div class="book-card" data-title="{{ book.title }}" data-author="{{ book.author }}">
+          {% if book.cover %}
+          <img src="{{ book.cover }}" alt="{{ book.title }}" loading="lazy">
+          {% else %}
+          <div class="book-placeholder"><span>{{ book.title }}</span></div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    
+    {% if books.finished | length == 0 and books.currentlyReading | length == 0 and books.wantToRead | length == 0 %}
+    <p class="no-books">No books yet. Add some books on <a href="https://literal.club/cookjwelch" target="_blank">Literal</a>!</p>
+    {% endif %}
+  </div>
+  
+  <!-- Projects Tab -->
+  <div id="projects" class="tab-content">
+    <ul class="projects-list">
+      {% for project in projects.projects %}
+      <li class="project-item">
+        <a href="{{ project.url }}" class="project-title">{{ project.title }}</a>
+        <p>{{ project.description }}</p>
+        <span class="project-meta">{{ project.tech }} · {{ project.year }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>

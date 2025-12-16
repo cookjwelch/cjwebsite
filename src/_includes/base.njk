@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} | Cook Welch</title>
+  <meta name="description" content="{{ description or 'Personal website of Cook Welch' }}">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+</head>
+<body>
+  <div class="container">
+    <header class="site-header">
+      <a href="/" class="site-title">Cook Welch</a>
+      <nav class="site-nav">
+        <a href="#about">About</a>
+        <a href="#shelf">Shelf</a>
+        <a href="#projects">Projects</a>
+      </nav>
+    </header>
+    
+    <main>
+      {{ content | safe }}
+    </main>
+    
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="https://www.linkedin.com/in/cookjwelch/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </footer>
+  </div>
+  
+  <script src="/js/main.js"></script>
+</body>
+</html>
