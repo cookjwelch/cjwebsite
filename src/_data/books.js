@@ -1,6 +1,28 @@
 require('dotenv').config();
 
-const LITERAL_API = "https://literal.club/graphql/";
+const LITERAL_API = "https://api.literal.club/";
+
+const BOOK_PARTS_FRAGMENT = `
+  fragment BookParts on Book {
+    id
+    slug
+    title
+    subtitle
+    description
+    isbn10
+    isbn13
+    language
+    pageCount
+    publishedDate
+    publisher
+    cover
+    authors {
+      id
+      name
+    }
+    gradientColors
+  }
+`;
 
 const LOGIN_MUTATION = `
   mutation login($email: String!, $password: String!) {
@@ -9,6 +31,7 @@ const LOGIN_MUTATION = `
       profile {
         id
         handle
+        name
       }
     }
   }
@@ -23,21 +46,14 @@ const READING_STATES_QUERY = `
       profileId
       createdAt
       book {
-        id
-        slug
-        title
-        subtitle
-        cover
-        authors {
-          id
-          name
-        }
+        ...BookParts
       }
     }
   }
+  ${BOOK_PARTS_FRAGMENT}
 `;
 
-async function graphqlRequest(query, variables = {}, token = null) {
+async function literalRequest(query, variables = {}, token = null) {
   const headers = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -47,31 +63,34 @@ async function graphqlRequest(query, variables = {}, token = null) {
     body: JSON.stringify({ query, variables }),
   });
 
-  const data = await response.json();
-  if (data.errors) throw new Error(data.errors[0].message);
-  return data.data;
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Literal API error ${response.status}: ${text.slice(0, 200)}`);
+  }
+
+  const json = await response.json();
+  if (json.errors) {
+    throw new Error(`Literal GraphQL error: ${json.errors.map(e => e.message).join(", ")}`);
+  }
+
+  return json.data;
 }
 
-async function getAuthToken(email, password) {
-  const data = await graphqlRequest(LOGIN_MUTATION, { email, password });
-  if (!data.login) throw new Error("Login failed");
-  return { token: data.login.token, profileId: data.login.profile.id };
+async function login(email, password) {
+  const data = await literalRequest(LOGIN_MUTATION, { email, password });
+  return data.login.token;
 }
 
-async function getReadingStates(token) {
-  const data = await graphqlRequest(READING_STATES_QUERY, {}, token);
-  return data.myReadingStates || [];
-}
+function transformBook(readingState) {
+  const book = readingState.book || {};
+  const author = (book.authors || []).map(a => a.name).join(", ") || "Unknown";
+  const cover = book.cover ? book.cover.replace("http://", "https://") : null;
 
-function transformBook(state) {
-  const book = state.book;
   return {
     id: book.id,
     title: book.title || "Untitled",
-    author: book.authors?.map((a) => a.name).join(", ") || "Unknown",
-    cover: book.cover || null,
-    slug: book.slug,
-    date: state.createdAt,
+    author,
+    cover,
   };
 }
 
@@ -80,23 +99,34 @@ module.exports = async function () {
   const password = process.env.LITERAL_PASSWORD;
 
   if (!email || !password) {
-    console.log("No Literal credentials. Using empty data.");
+    console.log("No LITERAL_EMAIL/LITERAL_PASSWORD set. Using empty data.");
     return { currentlyReading: [], wantToRead: [], finished: [] };
   }
 
   try {
-    console.log("Fetching from Literal...");
-    const { token } = await getAuthToken(email, password);
-    const states = await getReadingStates(token);
+    console.log("Logging in to Literal.club...");
+    const token = await login(email, password);
+    console.log("Fetching reading states from Literal.club...");
 
-    const currentlyReading = states.filter(s => s.status === "IS_READING").map(transformBook);
-    const wantToRead = states.filter(s => s.status === "WANTS_TO_READ").map(transformBook);
-    const finished = states.filter(s => s.status === "FINISHED").map(transformBook);
+    const data = await literalRequest(READING_STATES_QUERY, {}, token);
+    const states = data.myReadingStates || [];
+
+    const currentlyReading = states
+      .filter(s => s.status === "IS_READING")
+      .map(transformBook);
+
+    const wantToRead = states
+      .filter(s => s.status === "WANTS_TO_READ")
+      .map(transformBook);
+
+    const finished = states
+      .filter(s => s.status === "FINISHED")
+      .map(transformBook);
 
     console.log(`Found: ${currentlyReading.length} reading, ${wantToRead.length} want, ${finished.length} finished`);
     return { currentlyReading, wantToRead, finished };
   } catch (error) {
-    console.error("Literal error:", error.message);
+    console.error("Literal.club error:", error.message);
     return { currentlyReading: [], wantToRead: [], finished: [] };
   }
 };
