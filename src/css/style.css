@@ -145,7 +145,7 @@ a:hover { color: var(--link-hover); }
 .projects-list { list-style: none; }
 .project-item { padding: var(--spacing-md) 0; border-bottom: 1px solid var(--border-color); }
 .project-item:last-child { border-bottom: none; }
-.project-title { color: var(--text-color); text-decoration: none; display: block; margin-bottom: var(--spacing-xs); }
+.project-title { color: var(--text-color); text-decoration: underline; display: block; margin-bottom: var(--spacing-xs); }
 .project-title:hover { color: var(--accent-color); }
 .project-meta { color: var(--text-muted); font-size: 0.75rem; }
 
