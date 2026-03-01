@@ -1,11 +1,11 @@
 {
   "projects": [
     {
-      "title": "Project Name",
-      "description": "Brief description of the project",
-      "url": "#",
-      "tech": "Tools used",
-      "year": 2025
+      "title": "Golf Market Opportunity Explorer",
+      "description": "Identifying high-potential counties for golf club and apparel marketing",
+      "url": "https://golf-market-explorer.streamlit.app/",
+      "tech": "Python",
+      "year": 2026
     }
   ]
 }
