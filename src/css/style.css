@@ -73,6 +73,37 @@ a:hover { color: var(--link-hover); }
 .highlight-list li { position: relative; padding-left: var(--spacing-md); margin-bottom: var(--spacing-xs); }
 .highlight-list li::before { content: "-"; position: absolute; left: 0; color: var(--text-muted); }
 
+.experience-entry { margin-bottom: var(--spacing-lg); }
+.experience-entry .company-name { color: var(--accent-color); font-weight: 600; margin-bottom: var(--spacing-xs); }
+.experience-entry .job-title { color: var(--text-color); font-style: italic; margin-bottom: var(--spacing-xs); }
+.experience-entry .job-duties { list-style: none; margin-bottom: var(--spacing-md); }
+.experience-entry .job-duties li { position: relative; padding-left: var(--spacing-md); margin-bottom: var(--spacing-xs); }
+.experience-entry .job-duties li::before { content: "•"; position: absolute; left: 0; color: var(--text-muted); }
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.skills-column {
+  list-style: none;
+}
+
+.skills-column li {
+  position: relative;
+  padding-left: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.skills-column li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+}
+
 .tabs-container { margin-top: var(--spacing-2xl); }
 
 .tab-nav {
@@ -165,4 +196,5 @@ a:hover { color: var(--link-hover); }
   .container { padding: var(--spacing-sm); }
   .site-header { flex-direction: column; gap: var(--spacing-sm); text-align: center; }
   .book-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: var(--spacing-sm); }
+  .skills-grid { grid-template-columns: repeat(2, 1fr); }
 }
